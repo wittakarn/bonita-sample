@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid columns="2">
+        <p:outputLabel value="รหัสการลา"></p:outputLabel>
+        <p:inputText value="#{submitionLeaveBean.leaveCreate.leaveId}">
+        </p:inputText>
+        <p:outputLabel value="วันที่เริ่มต้น"></p:outputLabel>
+        <p:calendar value="#{submitionLeaveBean.leaveCreate.beginDate}"
+                    showOn="button" 
+                    navigator="true">
+        </p:calendar>
+        <p:outputLabel value="วันที่สิ้นสุด"></p:outputLabel>
+        <p:calendar value="#{submitionLeaveBean.leaveCreate.endDate}"
+                    showOn="button" 
+                    navigator="true">
+        </p:calendar>
+        <p:outputLabel value="สาเหตุการลา"></p:outputLabel>
+        <p:inputTextarea value="#{submitionLeaveBean.leaveCreate.reason}">
+        </p:inputTextarea>
+        <p:commandButton value="บันทึก"
+                         actionListener="#{submitionLeaveBean.createLeave}"
+                         update="@form"
+                         process="@form">
+        </p:commandButton>
+        <p:commandButton value="เริ่มใหม่" 
+                         update="@form" 
+                         process="@this">
+            <p:resetInput target="@form"/>
+        </p:commandButton>
+    </p:panelGrid>
+
+</ui:composition>
