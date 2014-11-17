@@ -7,7 +7,6 @@ package com.summitthai.view;
 
 import com.summitthai.bonita.domain.User;
 import com.summitthai.bonita.entity.Leave;
-import com.summitthai.bonita.service.BPM;
 import com.summitthai.bonita.service.LeaveServiceable;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
@@ -15,7 +14,6 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.event.ActionEvent;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,17 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @ToString
 @ViewScoped
-@ManagedBean(name = "submitionLeaveBean")
-public class SubmitionLeaveBean implements Serializable {
+@ManagedBean(name = "approvalLeaveBean")
+public class ApprovalLeaveBean implements Serializable {
 
-    private Leave leaveCreate;
     private Leave leaveEdit;
 
     @EJB
     private LeaveServiceable leaveServiceable;
-    
-    @EJB
-    private BPM bpm;
     
     @ManagedProperty(value = "#{pendingTasksBean}")
     private PendingTasksBean pendingTasksBean;
@@ -48,27 +42,21 @@ public class SubmitionLeaveBean implements Serializable {
     @ManagedProperty(value = "#{loginBean.user}")
     private User user;
 
-    public SubmitionLeaveBean() {
-        leaveCreate = new Leave();
+    public ApprovalLeaveBean() {
         leaveEdit = new Leave();
     }
 
     @PostConstruct
     public void init() {
-        leaveCreate.setUserId(user.getName());
-        leaveCreate.setPassword(user.getPassword());
-    }
-
-    public void createLeave(ActionEvent event) {
-        leaveServiceable.create(leaveCreate);
-        leaveCreate = new Leave();
     }
     
-    public void editLeave() {
+    public void approve(Boolean approve) {
         leaveEdit.setUserId(user.getName());
         leaveEdit.setPassword(user.getPassword());
-        bpm.completeTask(leaveEdit);
-        pendingTasksBean.searchAssighed();
+        leaveEdit.setApprove(approve);
+        
+        leaveServiceable.approve(leaveEdit);
+        pendingTasksBean.searchPending();
     }
 
 }

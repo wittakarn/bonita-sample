@@ -13,8 +13,6 @@ import com.summitthai.bonita.service.LeaveServiceable;
 import com.summitthai.sdd.sys.util.NumberUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -41,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PendingTasksBean implements Serializable{
     
     private Leave leave;
+    private Leave leaveEdit;
     private List<Map<String, Object>> hashs;
     private List<Leave> leaves;
     
@@ -60,14 +59,13 @@ public class PendingTasksBean implements Serializable{
     
     @PostConstruct
     public void init(){
-        search(null);
     }
     
-    public void search(ActionEvent event){
+    public void searchAssighed(){
+        leaves.clear();
         leave.setUserId(user.getName());
         leave.setPassword(user.getPassword());
-        hashs = (List<Map<String, Object>>) bpm.searchTask(leave);
-        PendingTasksBean.log.debug("hashs.size() = " + hashs.size());
+        hashs = (List<Map<String, Object>>) bpm.searchAssignedTask(leave);
         
         for (Map<String, Object> map : hashs) {
             PendingTasksBean.log.debug("map.get(\"leaveId\") = " + map.get("leaveId"));
@@ -75,6 +73,26 @@ public class PendingTasksBean implements Serializable{
             l.setTaskId(map.get("taskId").toString());
             leaves.add(l);
         }
+    }
+    
+    public void searchPending(){
+        leaves.clear();
+        leave.setUserId(user.getName());
+        leave.setPassword(user.getPassword());
+        hashs = (List<Map<String, Object>>) bpm.searchPendingTask(leave);
+        
+        for (Map<String, Object> map : hashs) {
+            PendingTasksBean.log.debug("map.get(\"leaveId\") = " + map.get("leaveId"));
+            Leave l = leaveServiceable.searchByPrimaryKey(NumberUtils.toBigDecimal(map.get("leaveId").toString()));
+            l.setTaskId(map.get("taskId").toString());
+            leaves.add(l);
+        }
+    }
+    
+    public void complete(ActionEvent event){
+        leave.setUserId(user.getName());
+        leave.setPassword(user.getPassword());
+        bpm.completeTask(leave);
     }
     
 }

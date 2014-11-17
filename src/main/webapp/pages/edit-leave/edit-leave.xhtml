@@ -12,8 +12,12 @@
 
     <ui:define name="center">
         <h:form id="formc" enctype="multipart/form-data">
+            <ui:insert name="search">
+                <ui:include src="search-leave.xhtml">
+                </ui:include>
+            </ui:insert>
             <ui:insert name="edit">
-                <ui:include src="send-leave-q.xhtml">
+                <ui:include src="edit-leave-e.xhtml">
                 </ui:include>
             </ui:insert>
         </h:form>

@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import javax.ejb.ApplicationException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -25,6 +26,7 @@ import javax.persistence.PersistenceContext;
  *
  * @author Wittakarn
  */
+@ApplicationException(rollback = true)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @Stateless(name = "LeaveService", mappedName = "leaveService")
@@ -46,6 +48,25 @@ public class LeaveService implements LeaveServiceable, Serializable {
         bpm.initialTask(leave);
     }
     
+    @Override
+    public void update(Leave leave) {
+        em.merge(leave);
+        em.flush();
+        bpm.completeTask(leave);
+    }
+    
+    @Override
+    public void approve(Leave leave) {
+        em.merge(leave);
+        em.flush();
+        
+        Map<String, Serializable> updateField = new HashMap<String, Serializable>();
+        updateField.put("approvementStatus", leave.isApprove());
+        leave.setUpdateField(updateField);
+        bpm.completeTask(leave);
+    }
+    
+    @Override
     public Leave searchByPrimaryKey(BigDecimal leaveId){
         return em.find(Leave.class, leaveId);
     }

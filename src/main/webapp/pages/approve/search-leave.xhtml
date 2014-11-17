@@ -8,8 +8,25 @@
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:p="http://primefaces.org/ui">
+    
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{pendingTasksBean.searchPending}" />
+    </f:metadata>
 
-    <p:dataTable var="leave" value="#{pendingTasksBean.leaves}">
+    <p:dataTable var="leave" 
+                 id="leaveTable"
+                 value="#{pendingTasksBean.leaves}"
+                 selection="#{approvalLeaveBean.leaveEdit}"
+                 selectionMode="single"
+                 rowKey="#{leave.leaveId}"
+                 style="width:100%;text-align:center;"
+                 emptyMessage="ไม่พบข้อมูล">
+
+        <p:ajax 
+            event="rowSelect"
+            process="leaveTable"
+            update="@form:leaveEdit"/>
+
         <p:column headerText="leaveId">
             <h:outputText value="#{leave.leaveId}" />
         </p:column>
@@ -19,12 +36,8 @@
         <p:column headerText="สาเหตุ">
             <h:outputText value="#{leave.reason}" />
         </p:column>
-        <p:column headerText="ยืนยันส่งใบลาเพื่ออนุมัติ">
-            <p:commandButton value="ส่งทันที"
-                             action="#{submitionLeaveBean.submitLeave(leave)}"
-                             update="@form">
-            </p:commandButton>
-        </p:column>
     </p:dataTable>
     
+    <p:separator></p:separator>
+
 </ui:composition>

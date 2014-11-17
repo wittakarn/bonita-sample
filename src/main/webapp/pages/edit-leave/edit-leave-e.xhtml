@@ -11,39 +11,38 @@
 
     <p:panelGrid columns="2" id="leaveEdit">
         <p:outputLabel value="รหัสการลา"></p:outputLabel>
-        <p:inputText value="#{approvalLeaveBean.leaveEdit.leaveId}"
+        <p:inputText value="#{submitionLeaveBean.leaveEdit.leaveId}"
                      readonly="true">
         </p:inputText>
         <p:outputLabel value="วันที่เริ่มต้น"></p:outputLabel>
-        <p:calendar value="#{approvalLeaveBean.leaveEdit.beginDate}"
+        <p:calendar value="#{submitionLeaveBean.leaveEdit.beginDate}"
                     showOn="button" 
-                    navigator="true"
-                    readonly="true">
+                    navigator="true">
         </p:calendar>
         <p:outputLabel value="วันที่สิ้นสุด"></p:outputLabel>
-        <p:calendar value="#{approvalLeaveBean.leaveEdit.endDate}"
+        <p:calendar value="#{submitionLeaveBean.leaveEdit.endDate}"
                     showOn="button" 
-                    navigator="true"
-                    readonly="true">
+                    navigator="true">
         </p:calendar>
         <p:outputLabel value="สาเหตุการลา"></p:outputLabel>
-        <p:inputTextarea value="#{approvalLeaveBean.leaveEdit.reason}"
+        <p:inputTextarea value="#{submitionLeaveBean.leaveEdit.reason}">
+        </p:inputTextarea>
+        
+        <p:outputLabel value="หมายเหตุ"></p:outputLabel>
+        <p:inputTextarea value="#{submitionLeaveBean.leaveEdit.remark}"
                          readonly="true">
         </p:inputTextarea>
-
-        <p:outputLabel value="หมายเหตุ"></p:outputLabel>
-        <p:inputTextarea value="#{approvalLeaveBean.leaveEdit.remark}">
-        </p:inputTextarea>
-
-        <p:commandButton value="อนุมัติ"
-                         action="#{approvalLeaveBean.approve(true)}"
+        
+        <p:commandButton value="บันทึก"
+                         actionListener="#{submitionLeaveBean.editLeave}"
                          update="@form"
                          process="@form">
         </p:commandButton>
-        <p:commandButton value="ไม่อนุมัติ"
-                         action="#{approvalLeaveBean.approve(false)}"
-                         update="@form"
-                         process="@form">
+        <p:commandButton value="เริ่มใหม่" 
+                         update="@form" 
+                         process="@this">
+            <p:resetInput target="@form"/>
         </p:commandButton>
     </p:panelGrid>
+
 </ui:composition>

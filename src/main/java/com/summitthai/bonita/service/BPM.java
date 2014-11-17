@@ -19,7 +19,9 @@ public interface BPM extends Serializable {
 
     public Object countTask(WorkItem workItem) throws CountTaskException;
 
-    public Object searchTask(WorkItem workItem) throws SearchTaskException;
+    public Object searchPendingTask(WorkItem workItem) throws SearchTaskException;
+    
+    public Object searchAssignedTask(WorkItem workItem) throws SearchTaskException;
 
     public Object updateTask(WorkItem workItem) throws UpdateTaskException;
 

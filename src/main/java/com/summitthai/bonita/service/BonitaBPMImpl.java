@@ -47,7 +47,7 @@ public class BonitaBPMImpl implements BPM {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object searchTask(WorkItem workItem) throws SearchTaskException {
+    public Object searchPendingTask(WorkItem workItem) throws SearchTaskException {
         try {
             return BonitaWrapper.listPendingTasks(workItem.getUserId(), workItem.getPassword());
         } catch (Exception e) {
@@ -55,6 +55,16 @@ public class BonitaBPMImpl implements BPM {
             throw new SearchTaskException(e);
         }
     }
+    
+    public Object searchAssignedTask(WorkItem workItem) throws SearchTaskException {
+        try {
+            return BonitaWrapper.listAssignedTasks(workItem.getUserId(), workItem.getPassword());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SearchTaskException(e);
+        }
+    }
+
 
     public Object updateTask(WorkItem workItem) throws UpdateTaskException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -63,7 +73,7 @@ public class BonitaBPMImpl implements BPM {
     public Object completeTask(WorkItem workItem) throws CompleteTaskException {
         try {
             Long taskId = Long.valueOf(workItem.getTaskId());
-            BonitaWrapper.executeATask(workItem.getUserId(), workItem.getPassword(), taskId);
+            BonitaWrapper.executeATask(workItem.getUserId(), workItem.getPassword(), taskId, workItem.getUpdateField());
             return null;
         } catch (Exception e) {
             throw new CompleteTaskException(e);

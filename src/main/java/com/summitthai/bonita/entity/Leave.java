@@ -20,6 +20,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -61,6 +62,14 @@ public class Leave extends WorkItem implements Serializable {
     @Size(max = 65535)
     @Column(name = "reason")
     private String reason;
+    
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "remark")
+    private String remark;
+    
+    @Transient
+    private Boolean approve;
 
     public Leave() {
     }
@@ -105,6 +114,22 @@ public class Leave extends WorkItem implements Serializable {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public Boolean isApprove() {
+        return approve;
+    }
+
+    public void setApprove(Boolean approve) {
+        this.approve = approve;
     }
 
     @Override

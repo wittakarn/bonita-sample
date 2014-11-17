@@ -53,9 +53,9 @@ public class BonitaWrapper {
      * The maximum number of elements retrieved by paged requests
      */
     private static int PAGE_SIZE = 100;
-    
+
     private final static String processDefinitionName = "Leave Pool";
-    private final static String processVersion = "1.0";
+    private final static String processVersion = "1.1";
 
     static {
         System.setProperty("bonita.home", SystemConfig.getString(SystemConfig.CONF_DIR).concat("/bonita"));
@@ -77,7 +77,7 @@ public class BonitaWrapper {
             ProcessAPI processAPI = getProcessAPI(session);
             long processId = processAPI.getProcessDefinitionId(processDefinitionName, processVersion);
             // create a new process instance
-            ProcessInstance processInstance =  processAPI.startProcess(processId, map);
+            ProcessInstance processInstance = processAPI.startProcess(processId, map);
             System.out.println("Process instantiated! Id: " + processInstance.getId());
         } finally {
             // logout
@@ -103,6 +103,32 @@ public class BonitaWrapper {
 
             // get all tasks.
             pendingTasks = processAPI.getPendingHumanTaskInstances(session.getUserId(), startIndex, PAGE_SIZE, ActivityInstanceCriterion.LAST_UPDATE_ASC);
+            // print all tasks.
+            return generateResponseTask(page, pendingTasks, processAPI);
+        } finally {
+            // logout
+            doTenantLogout(session);
+        }
+    }
+    
+    /**
+     * List all assigned tasks for the logged user
+     *
+     * @throws BonitaException if an exception occurs when listing the pending
+     * tasks
+     */
+    public static List<HashMap<String, Object>> listAssignedTasks(String user, String password) throws BonitaException {
+        // login
+        APISession session = doTenantLogin(user, password);
+        try {
+            ProcessAPI processAPI = getProcessAPI(session);
+            // the result will be retrieved by pages of PAGE_SIZE size
+            int startIndex = 0;
+            int page = 1;
+            List<HumanTaskInstance> pendingTasks = null;
+
+            // get all tasks.
+            pendingTasks = processAPI.getAssignedHumanTaskInstances(session.getUserId(), startIndex, PAGE_SIZE, ActivityInstanceCriterion.DEFAULT);
             // print all tasks.
             return generateResponseTask(page, pendingTasks, processAPI);
         } finally {
@@ -173,7 +199,7 @@ public class BonitaWrapper {
      * @throws IOException if an exception occurs when reading the task id to be
      * executed
      */
-    public static void executeATask(String user, String password, Long taskId) throws BonitaException, IOException {
+    public static void executeATask(String user, String password, Long taskId, Map<String, Serializable> updateField) throws BonitaException, IOException {
 
         ProcessRuntimeAPI processAPI;
         HumanTaskInstance taskToExecute;
@@ -190,10 +216,17 @@ public class BonitaWrapper {
             System.out.println("Task '" + taskToExecute.getName() + "' of process instance '" + taskToExecute.getRootContainerId() + "' assigned to '"
                     + session.getUserName() + ".");
 
+            if(updateField != null){
+                for (String key : updateField.keySet()) {
+                    processAPI.updateActivityDataInstance(key, taskId, updateField.get(key));
+                }
+            }
+            
             // execute the task
             processAPI.executeFlowNode(taskToExecute.getId());
             System.out.println("Task '" + taskToExecute.getName() + "' of process instance '" + taskToExecute.getRootContainerId() + "' executed by '"
                     + session.getUserName() + ".");
+
         } catch (ActivityInstanceNotFoundException e) {
             // catch ActivityInstanceNotFoundException to cover the case where the user enter an invalid tasks id
             System.out.println("No task found with id " + taskId);

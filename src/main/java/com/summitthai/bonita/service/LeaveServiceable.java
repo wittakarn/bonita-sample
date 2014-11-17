@@ -17,6 +17,7 @@ import javax.ejb.Remote;
 @Remote
 public interface LeaveServiceable {
     public void create(Leave leave);
-    
+    public void update(Leave leave);
+    public void approve(Leave leave);
     public Leave searchByPrimaryKey(BigDecimal leaveId);
 }
